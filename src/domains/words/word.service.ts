@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
 import { Word } from './entities/word.entity';
@@ -12,23 +12,46 @@ export class WordService {
     private wordRepository: Repository<Word>,
   ) {}
 
-  create(createWordDto: CreateWordDto) {
-    return 'This action adds a new word';
+  async create({ name, language }: CreateWordDto): Promise<Word> {
+    const nameSize = 5;
+    const validLanguages = ['pt-br', 'en-us'];
+
+    const findName = await this.findByName(name);
+
+    if (!!findName) throw new BadRequestException('Word already exists');
+
+    if (name.length !== nameSize)
+      throw new BadRequestException('Invalid name size');
+
+    if (!validLanguages.includes(language))
+      throw new BadRequestException('Invalid language');
+
+    return this.wordRepository.save(
+      this.wordRepository.create({ name: name.toUpperCase(), language }),
+    );
   }
 
-  findAll() {
-    return this.wordRepository.find();
+  async findAll(): Promise<Word[]> {
+    return this.wordRepository.find({
+      order: {
+        name: 'ASC',
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} word`;
+  findOne(id: string): Promise<Word | undefined> {
+    return this.wordRepository.findOne(id);
   }
 
-  update(id: number, updateWordDto: UpdateWordDto) {
+  findByName(name: string): Promise<Word | undefined> {
+    return this.wordRepository.findOne({ name: name.toUpperCase() });
+  }
+
+  update(id: string, updateWordDto: UpdateWordDto) {
     return `This action updates a #${id} word`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} word`;
   }
 }

@@ -27,16 +27,16 @@ export class WordController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.wordService.findOne(+id);
+    return this.wordService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateWordDto: UpdateWordDto) {
-    return this.wordService.update(+id, updateWordDto);
+    return this.wordService.update(id, updateWordDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.wordService.remove(+id);
+    return this.wordService.remove(id);
   }
 }
