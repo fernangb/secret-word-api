@@ -62,8 +62,12 @@ export class WordService {
     return this.wordRepository.save(word);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} word`;
+  async remove(id: string) {
+    const word = await this.findOne(id);
+
+    if (!word) throw new BadRequestException('Word not found');
+
+    await this.wordRepository.delete(id);
   }
 
   findByName(name: string): Promise<Word | undefined> {
