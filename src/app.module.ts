@@ -6,7 +6,13 @@ import { WordModule } from './domains/words/word.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule.forRoot(), DatabaseModule, WordModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    DatabaseModule,
+    WordModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
