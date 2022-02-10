@@ -86,4 +86,16 @@ export class WordService {
 
     return true;
   }
+
+  async findRandomWord(): Promise<Word> {
+    const randomWord = await this.wordRepository
+      .createQueryBuilder()
+      .select('*')
+      .from(Word, 'word')
+      .orderBy('RANDOM()')
+      .limit(1)
+      .execute();
+
+    return randomWord[0];
+  }
 }
