@@ -16,8 +16,8 @@ export class WordController {
   constructor(private readonly wordService: WordService) {}
 
   @Post()
-  create(@Body() createWordDto: CreateWordDto) {
-    return this.wordService.create(createWordDto);
+  create(@Body() { name, language }: CreateWordDto) {
+    return this.wordService.create({ name: name.toUpperCase(), language });
   }
 
   @Get()
@@ -31,8 +31,8 @@ export class WordController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWordDto: UpdateWordDto) {
-    return this.wordService.update(id, updateWordDto);
+  update(@Param('id') id: string, @Body() { name, language }: UpdateWordDto) {
+    return this.wordService.update(id, { name: name.toUpperCase(), language });
   }
 
   @Delete(':id')

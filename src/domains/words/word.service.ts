@@ -24,7 +24,7 @@ export class WordService {
       throw new BadRequestException('Invalid language');
 
     return this.wordRepository.save(
-      this.wordRepository.create({ name: name.toUpperCase(), language }),
+      this.wordRepository.create({ name, language }),
     );
   }
 
@@ -40,8 +40,26 @@ export class WordService {
     return this.wordRepository.findOne(id);
   }
 
-  update(id: string, updateWordDto: UpdateWordDto) {
-    return `This action updates a #${id} word`;
+  async update(id: string, { name, language }: UpdateWordDto) {
+    const word = await this.findOne(id);
+
+    if (!word) throw new BadRequestException('Word not found');
+
+    const wordAlreadyExists = await this.findByName(name);
+
+    if (!!wordAlreadyExists)
+      throw new BadRequestException('Word already exists');
+
+    if (!this.validateName(name))
+      throw new BadRequestException('Invalid name size');
+
+    if (!this.validateLanguage(language))
+      throw new BadRequestException('Invalid language');
+
+    word.name = name;
+    word.language = language;
+
+    return this.wordRepository.save(word);
   }
 
   remove(id: string) {
@@ -49,7 +67,7 @@ export class WordService {
   }
 
   findByName(name: string): Promise<Word | undefined> {
-    return this.wordRepository.findOne({ name: name.toUpperCase() });
+    return this.wordRepository.findOne({ name });
   }
 
   validateName(name: string): boolean {
