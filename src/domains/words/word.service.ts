@@ -13,8 +13,6 @@ export class WordService {
   ) {}
 
   async create({ name, language }: CreateWordDto): Promise<Word> {
-    const validLanguages = ['pt-br', 'en-us'];
-
     const findName = await this.findByName(name);
 
     if (!!findName) throw new BadRequestException('Word already exists');
@@ -22,7 +20,7 @@ export class WordService {
     if (!this.validateName(name))
       throw new BadRequestException('Invalid name size');
 
-    if (!validLanguages.includes(language))
+    if (!this.validateLanguage(language))
       throw new BadRequestException('Invalid language');
 
     return this.wordRepository.save(
@@ -57,6 +55,13 @@ export class WordService {
   validateName(name: string): boolean {
     const nameSize = 5;
     if (name.length !== nameSize) return false;
+
+    return true;
+  }
+
+  validateLanguage(language: string): boolean {
+    const validLanguages = ['pt-br', 'en-us'];
+    if (!validLanguages.includes(language)) return false;
 
     return true;
   }
