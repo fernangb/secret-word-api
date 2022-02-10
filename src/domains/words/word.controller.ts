@@ -16,27 +16,30 @@ export class WordController {
   constructor(private readonly wordService: WordService) {}
 
   @Post()
-  create(@Body() { name, language }: CreateWordDto) {
+  async create(@Body() { name, language }: CreateWordDto) {
     return this.wordService.create({ name: name.toUpperCase(), language });
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.wordService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.wordService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() { name, language }: UpdateWordDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() { name, language }: UpdateWordDto,
+  ) {
     return this.wordService.update(id, { name: name.toUpperCase(), language });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.wordService.remove(id);
   }
 }

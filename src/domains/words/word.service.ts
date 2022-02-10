@@ -1,9 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
 import { Word } from './entities/word.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { WordNotFoundException } from 'src/exceptions/word-not-found.exception';
+import { WordAlreadyExistsException } from 'src/exceptions/word-already-exists.exception';
+import { InvalidNameSizeException } from 'src/exceptions/invalid-name-size.exception';
+import { InvalidLanguageException } from 'src/exceptions/invalid-language.exception';
 
 @Injectable()
 export class WordService {
@@ -15,13 +19,11 @@ export class WordService {
   async create({ name, language }: CreateWordDto): Promise<Word> {
     const findName = await this.findByName(name);
 
-    if (!!findName) throw new BadRequestException('Word already exists');
+    if (!!findName) throw new WordAlreadyExistsException();
 
-    if (!this.validateName(name))
-      throw new BadRequestException('Invalid name size');
+    if (!this.validateName(name)) throw new InvalidNameSizeException();
 
-    if (!this.validateLanguage(language))
-      throw new BadRequestException('Invalid language');
+    if (!this.validateLanguage(language)) throw new InvalidLanguageException();
 
     return this.wordRepository.save(
       this.wordRepository.create({ name, language }),
@@ -43,18 +45,15 @@ export class WordService {
   async update(id: string, { name, language }: UpdateWordDto) {
     const word = await this.findOne(id);
 
-    if (!word) throw new BadRequestException('Word not found');
+    if (!word) throw new WordNotFoundException();
 
     const wordAlreadyExists = await this.findByName(name);
 
-    if (!!wordAlreadyExists)
-      throw new BadRequestException('Word already exists');
+    if (!!wordAlreadyExists) throw new WordAlreadyExistsException();
 
-    if (!this.validateName(name))
-      throw new BadRequestException('Invalid name size');
+    if (!this.validateName(name)) throw new InvalidNameSizeException();
 
-    if (!this.validateLanguage(language))
-      throw new BadRequestException('Invalid language');
+    if (!this.validateLanguage(language)) throw new InvalidLanguageException();
 
     word.name = name;
     word.language = language;
@@ -65,7 +64,7 @@ export class WordService {
   async remove(id: string) {
     const word = await this.findOne(id);
 
-    if (!word) throw new BadRequestException('Word not found');
+    if (!word) throw new WordNotFoundException();
 
     await this.wordRepository.delete(id);
   }
