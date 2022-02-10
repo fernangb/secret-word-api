@@ -13,14 +13,13 @@ export class WordService {
   ) {}
 
   async create({ name, language }: CreateWordDto): Promise<Word> {
-    const nameSize = 5;
     const validLanguages = ['pt-br', 'en-us'];
 
     const findName = await this.findByName(name);
 
     if (!!findName) throw new BadRequestException('Word already exists');
 
-    if (name.length !== nameSize)
+    if (!this.validateName(name))
       throw new BadRequestException('Invalid name size');
 
     if (!validLanguages.includes(language))
@@ -43,15 +42,22 @@ export class WordService {
     return this.wordRepository.findOne(id);
   }
 
-  findByName(name: string): Promise<Word | undefined> {
-    return this.wordRepository.findOne({ name: name.toUpperCase() });
-  }
-
   update(id: string, updateWordDto: UpdateWordDto) {
     return `This action updates a #${id} word`;
   }
 
   remove(id: string) {
     return `This action removes a #${id} word`;
+  }
+
+  findByName(name: string): Promise<Word | undefined> {
+    return this.wordRepository.findOne({ name: name.toUpperCase() });
+  }
+
+  validateName(name: string): boolean {
+    const nameSize = 5;
+    if (name.length !== nameSize) return false;
+
+    return true;
   }
 }

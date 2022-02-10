@@ -14,7 +14,7 @@ import { join } from 'path';
       port: 5435,
       username: 'postgres',
       password: 'manosleague',
-      database: process.env.DB_NAME,
+      database: 'secret-word',
       entities: [join(__dirname, 'domains', '**', '*.entity.{ts,js}')],
       synchronize: true,
     }),
