@@ -9,29 +9,29 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'games' })
+@Entity({ name: 'rounds' })
 export class Game {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'word_id' })
-  wordId: string;
+  @Column({ name: 'game_id' })
+  gameId: string;
 
-  @Column({ name: 'is_found', default: false })
+  @Column({ name: 'word_sent' })
+  wordSent: string;
+
+  @Column({ name: 'is_found' })
   isFound: boolean;
 
-  @Column({ name: 'is_finished', default: false })
-  isFinished: boolean;
+  @Column()
+  attempt: number;
 
-  @Column({ default: 0 })
-  attempts: number;
-
-  @Column({ default: 0 })
+  @Column()
   points: number;
 
-  @ManyToOne(() => Word, (word) => word.name, { eager: true })
-  @JoinColumn({ name: 'word_id' })
-  word: Word;
+  @ManyToOne(() => Game, (game) => game.id, { eager: true })
+  @JoinColumn({ name: 'game_id' })
+  game: Game;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

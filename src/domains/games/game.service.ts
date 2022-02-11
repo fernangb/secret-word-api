@@ -26,7 +26,7 @@ export class GameService {
   findAll() {
     return this.gameRepository.find({
       order: {
-        createdAt: 'ASC',
+        createdAt: 'DESC',
       },
     });
   }
