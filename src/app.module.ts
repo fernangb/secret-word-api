@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database.module';
 import { WordModule } from './domains/words/word.module';
 import { ConfigModule } from '@nestjs/config';
+import { GameModule } from './domains/games/game.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     DatabaseModule,
     WordModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],
